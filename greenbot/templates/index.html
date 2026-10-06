@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GreenBot — Field notes, made clear</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">✳</span><span>greenbot<small>FIELD INTELLIGENCE</small></span></div>
+      <div class="sidebar-heading">WORKSPACE</div>
+      <div class="nav-item active"><span>▤</span> Field assistant <span class="nav-arrow">↗</span></div>
+      <div class="sidebar-heading second">SOURCE MATERIAL</div>
+      <p class="side-copy">Paste trusted passages from your knowledge base. GreenBot uses only this material to answer.</p>
+      <label for="context">Retrieved context</label>
+      <textarea id="context" maxlength="3000" placeholder="Paste a retrieved Qdrant passage here…" spellcheck="false"></textarea>
+      <div class="context-meta"><span id="source-state">No source added</span><span>Required</span></div>
+      <div class="sidebar-bottom"><span class="status-dot"></span> Context grounded responses</div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><span class="crumb">Workspace <b>/</b> Field assistant</span><span class="top-right"><span class="top-dot"></span> GREENBOT <span class="top-divider"></span> v1.0</span></header>
+      <div class="conversation" id="conversation">
+        <section class="welcome" id="welcome">
+          <div class="eyebrow"><span class="eyebrow-line"></span> YOUR AGRICULTURE DESK</div>
+          <h1>Good decisions start<br>with <em>good information.</em></h1>
+          <p>Ask a field question. GreenBot turns your trusted source material into a clear, concise answer.</p>
+          <div class="intro-card"><span class="intro-icon">✳</span><div><strong>Grounded in your sources</strong><span>Every answer is written from the material you provide. If the material is not enough, GreenBot will say so.</span></div></div>
+        </section>
+        <div class="messages" id="messages" aria-live="polite"></div>
+      </div>
+      <div class="composer-wrap">
+        <form id="chat-form" class="composer">
+          <textarea id="question" rows="1" maxlength="1000" placeholder="Ask about your field, crop, or map data…" required></textarea>
+          <div class="composer-bottom"><span>English, اردو, or Roman Urdu</span><button type="submit" id="send" aria-label="Send message">↗</button></div>
+        </form>
+        <p class="footnote">Answers depend entirely on the source material supplied.</p>
+      </div>
+    </main>
+  </div>
+  <dialog id="key-dialog"><form method="dialog" id="key-form"><h2>Connect to GreenBot</h2><p>Enter the API key from your <code>.env</code> file. It stays in this browser tab.</p><input type="password" id="api-key" placeholder="API key" autocomplete="off" required><div class="dialog-actions"><button type="submit">Continue</button></div></form></dialog>
+  <script src="/static/app.js"></script>
+</body>
+</html>
