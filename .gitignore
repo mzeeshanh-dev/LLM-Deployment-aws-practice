@@ -3,3 +3,4 @@
 __pycache__/
 .pytest_cache/
 *.pyc
+.known_hosts_greenbot

@@ -3,6 +3,8 @@ from secrets import compare_digest
 
 import httpx
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi.responses import StreamingResponse
+import json
 from fastapi.middleware.wsgi import WSGIMiddleware
 from flask import Flask, render_template
 
@@ -43,6 +45,18 @@ async def chat(payload: ChatRequest, request: Request):
         return await request.app.state.writer.generate(payload)
     except (httpx.HTTPError, ValueError, KeyError) as exc:
         raise HTTPException(status_code=503, detail="Model service is unavailable") from exc
+
+
+@app.post("/v1/chat/stream", dependencies=[Depends(authenticate)])
+async def chat_stream(payload: ChatRequest, request: Request):
+    async def events():
+        try:
+            async for item in request.app.state.writer.stream(payload):
+                yield f"event: {item['event']}\ndata: {json.dumps(item['data'], ensure_ascii=False)}\n\n"
+        except (httpx.HTTPError, ValueError, KeyError):
+            yield 'event: error\ndata: {"detail":"Model service is unavailable"}\n\n'
+
+    return StreamingResponse(events(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
 app.mount("/", WSGIMiddleware(web))

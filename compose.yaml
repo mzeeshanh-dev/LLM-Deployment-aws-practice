@@ -6,6 +6,8 @@ services:
       OLLAMA_BASE_URL: http://ollama:11434
     ports:
       - "127.0.0.1:8000:8000"
+    volumes:
+      - ./greenbot:/app/greenbot:ro
     depends_on:
       - ollama
     restart: unless-stopped

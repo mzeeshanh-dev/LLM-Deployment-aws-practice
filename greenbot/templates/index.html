@@ -3,43 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GreenBot — Field notes, made clear</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta name="theme-color" content="#f7f8f4">
+  <title>GreenBot — Field assistant</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="stylesheet" href="/static/style.css?v=2">
 </head>
 <body>
-  <div class="shell">
-    <aside class="sidebar">
-      <div class="brand"><span class="brand-mark">✳</span><span>greenbot<small>FIELD INTELLIGENCE</small></span></div>
-      <div class="sidebar-heading">WORKSPACE</div>
-      <div class="nav-item active"><span>▤</span> Field assistant <span class="nav-arrow">↗</span></div>
-      <div class="sidebar-heading second">SOURCE MATERIAL</div>
-      <p class="side-copy">Paste trusted passages from your knowledge base. GreenBot uses only this material to answer.</p>
-      <label for="context">Retrieved context</label>
-      <textarea id="context" maxlength="3000" placeholder="Paste a retrieved Qdrant passage here…" spellcheck="false"></textarea>
-      <div class="context-meta"><span id="source-state">No source added</span><span>Required</span></div>
-      <div class="sidebar-bottom"><span class="status-dot"></span> Context grounded responses</div>
+  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-sprout" viewBox="0 0 24 24"><path d="M7 20h10M12 20v-8M12 12C6 12 4 9 4 4c5 0 8 2 8 8Zm0 0c0-6 3-8 8-8 0 5-2 8-8 8Z"/></symbol>
+    <symbol id="icon-panel" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></symbol>
+    <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></symbol>
+    <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 4v8m4-8v8"/></symbol>
+    <symbol id="icon-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 3 1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11l6.2-1.8L12 3Z"/></symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="icon-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="5"/><path d="m11.5 11.5 9-9L23 5l-3 3 2 2-3 3-2-2-2 2"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+  </svg>
+  <div class="app-shell">
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    <aside class="sidebar" id="sidebar" aria-label="Source workspace">
+      <div class="sidebar-top"><div class="brand"><span class="brand-icon"><svg class="icon"><use href="#icon-sprout"></use></svg></span><span>greenbot<small>FIELD ASSISTANT</small></span></div><button class="icon-button mobile-close" id="close-sources" type="button" aria-label="Close sources"><svg class="icon"><use href="#icon-x"></use></svg></button></div>
+      <div class="source-heading"><span>YOUR SOURCES</span><span class="source-count" id="source-count">0</span></div>
+      <p class="source-intro">Add trusted notes or a document. Questions about these sources use grounded mode automatically.</p>
+      <label class="upload-zone" for="file-input" id="upload-zone"><span class="upload-icon"><svg class="icon"><use href="#icon-upload"></use></svg></span><strong>Upload a source</strong><span>CSV, PDF, or TXT · up to 10 MB</span><input id="file-input" type="file" accept=".csv,.pdf,.txt,text/csv,application/pdf,text/plain" hidden></label>
+      <div class="file-card" id="file-card" hidden><svg class="icon"><use href="#icon-file"></use></svg><div><strong id="file-name"></strong><span id="file-detail"></span></div></div>
+      <div class="section-separator"><span>OR PASTE TEXT</span></div>
+      <label class="textarea-label" for="context">Source passage</label>
+      <textarea id="context" maxlength="3000" placeholder="Example: Farm record says Green Plot is in Sahiwal district…" spellcheck="false"></textarea>
+      <div class="source-hint" id="source-hint">Nothing saved yet</div>
+      <button class="subtle-button clear-context" id="clear-context" type="button"><svg class="icon"><use href="#icon-trash"></use></svg> Clear context</button>
+      <div class="privacy-card"><svg class="icon"><use href="#icon-shield"></use></svg><p>Source text is saved in this browser. Only passages used for an answer are sent to the chat API.</p></div>
     </aside>
     <main class="main">
-      <header class="topbar"><span class="crumb">Workspace <b>/</b> Field assistant</span><span class="top-right"><span class="top-dot"></span> GREENBOT <span class="top-divider"></span> v1.0</span></header>
-      <div class="conversation" id="conversation">
-        <section class="welcome" id="welcome">
-          <div class="eyebrow"><span class="eyebrow-line"></span> YOUR AGRICULTURE DESK</div>
-          <h1>Good decisions start<br>with <em>good information.</em></h1>
-          <p>Ask a field question. GreenBot turns your trusted source material into a clear, concise answer.</p>
-          <div class="intro-card"><span class="intro-icon">✳</span><div><strong>Grounded in your sources</strong><span>Every answer is written from the material you provide. If the material is not enough, GreenBot will say so.</span></div></div>
-        </section>
-        <div class="messages" id="messages" aria-live="polite"></div>
-      </div>
-      <div class="composer-wrap">
-        <form id="chat-form" class="composer">
-          <textarea id="question" rows="1" maxlength="1000" placeholder="Ask about your field, crop, or map data…" required></textarea>
-          <div class="composer-bottom"><span>English, اردو, or Roman Urdu</span><button type="submit" id="send" aria-label="Send message">↗</button></div>
-        </form>
-        <p class="footnote">Answers depend entirely on the source material supplied.</p>
-      </div>
+      <header class="topbar"><div class="top-left"><button class="icon-button mobile-sources" id="open-sources" type="button" aria-label="Open sources"><svg class="icon"><use href="#icon-panel"></use></svg></button><div><span class="top-title">Field assistant</span><span class="top-subtitle" id="mode-label">General chat</span></div></div><div class="top-actions"><span class="mode-pill" id="mode-pill"><svg class="icon"><use href="#icon-spark"></use></svg><span>General chat</span></span><button class="header-button" id="edit-key" type="button" title="Change API key"><svg class="icon"><use href="#icon-key"></use></svg><span>API key</span></button><button class="header-button" id="clear-chat" type="button" title="Clear conversation"><svg class="icon"><use href="#icon-trash"></use></svg><span>Clear chat</span></button></div></header>
+      <div class="conversation" id="conversation"><section class="welcome" id="welcome"><div class="welcome-mark"><svg class="icon"><use href="#icon-sprout"></use></svg></div><div class="eyebrow">GREENBOT / FIELD INTELLIGENCE</div><h1>Answers for the<br><em>work in front of you.</em></h1><p>Ask freely in general chat. Add your own source to get an answer grounded in that material.</p><div class="welcome-grid"><button class="prompt-card" type="button" data-prompt="What can you help me with?"><svg class="icon"><use href="#icon-spark"></use></svg><span>Explore general chat</span><svg class="icon arrow"><use href="#icon-arrow"></use></svg></button><button class="prompt-card" type="button" id="welcome-source"><svg class="icon"><use href="#icon-file"></use></svg><span>Ask from a document</span><svg class="icon arrow"><use href="#icon-arrow"></use></svg></button></div></section><div class="messages" id="messages" aria-live="polite"></div></div>
+      <div class="composer-wrap"><form id="chat-form" class="composer"><textarea id="question" rows="1" maxlength="1000" placeholder="Ask GreenBot anything…" required></textarea><div class="composer-footer"><span id="composer-mode">General chat · no source selected</span><button class="send-button" type="submit" id="send" aria-label="Send message"><svg class="icon"><use href="#icon-send"></use></svg></button></div></form><p class="footnote">English, Urdu, and Roman Urdu supported.</p></div>
     </main>
   </div>
-  <dialog id="key-dialog"><form method="dialog" id="key-form"><h2>Connect to GreenBot</h2><p>Enter the API key from your <code>.env</code> file. It stays in this browser tab.</p><input type="password" id="api-key" placeholder="API key" autocomplete="off" required><div class="dialog-actions"><button type="submit">Continue</button></div></form></dialog>
-  <script src="/static/app.js"></script>
+  <dialog id="key-dialog"><form method="dialog" id="key-form"><div class="dialog-icon"><svg class="icon"><use href="#icon-key"></use></svg></div><h2>Connect to GreenBot</h2><p>Enter the API key from the server's <code>.env</code> file. It stays in this browser tab.</p><input type="password" id="api-key" placeholder="API key" autocomplete="off" required><div class="dialog-actions"><button type="button" class="subtle-button" id="cancel-key">Cancel</button><button type="submit" class="dialog-submit">Continue</button></div></form></dialog>
+  <script type="module" src="/static/app.js?v=5"></script>
 </body>
 </html>

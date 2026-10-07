@@ -19,11 +19,15 @@ class ChatRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1000)
     context: list[ContextChunk] = Field(default_factory=list, max_length=5)
     language: Literal["auto", "english", "urdu", "roman_urdu"] = "auto"
+    mode: Literal["auto", "grounded", "raw"] = "auto"
+    history: list["ChatTurn"] = Field(default_factory=list, max_length=6)
 
     @model_validator(mode="after")
     def context_budget(self):
         if sum(len(chunk.text) for chunk in self.context) > 3000:
             raise ValueError("combined context must be at most 3000 characters")
+        if self.mode == "raw" and self.context:
+            raise ValueError("raw mode cannot include context; use grounded or auto")
         return self
 
     @field_validator("question")
@@ -37,3 +41,19 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     answer: str
     status: Literal["answered", "insufficient_context"]
+    mode: Literal["grounded", "raw"]
+
+
+class ChatTurn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=1000)
+
+    @field_validator("content")
+    @classmethod
+    def content_nonblank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("history content cannot be blank")
+        return value.strip()
+
+
+ChatRequest.model_rebuild()

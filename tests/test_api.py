@@ -11,7 +11,7 @@ def test_ui_health_and_chat_auth(monkeypatch):
 
     class FakeWriter:
         async def generate(self, payload):
-            return ChatResponse(answer="The field is in Punjab.", status="answered")
+            return ChatResponse(answer="The field is in Punjab.", status="answered", mode="grounded")
 
     with TestClient(app) as client:
         assert client.get("/").status_code == 200
@@ -22,4 +22,4 @@ def test_ui_health_and_chat_auth(monkeypatch):
         assert client.post("/v1/chat", json=body).status_code == 401
         response = client.post("/v1/chat", json=body, headers={"Authorization": "Bearer test-secret"})
         assert response.status_code == 200
-        assert response.json() == {"answer": "The field is in Punjab.", "status": "answered"}
+        assert response.json() == {"answer": "The field is in Punjab.", "status": "answered", "mode": "grounded"}
